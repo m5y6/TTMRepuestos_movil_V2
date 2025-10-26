@@ -8,7 +8,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.ttmrepuestos.data.local.AppDatabase
 import com.example.ttmrepuestos.data.repository.ProductoRepository
-import com.example.ttmrepuestos.ui.navigation.AppNavGraph
+import com.example.ttmrepuestos.ui.MainScreen
 import com.example.ttmrepuestos.ui.theme.TTMRepuestosTheme
 import com.example.ttmrepuestos.viewmodel.ProductoViewModelFactory
 
@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
         val factory = ProductoViewModelFactory(repo)
         setContent {
             TTMRepuestosTheme {
-                AppNavGraph(factory = factory)
+                MainScreen(factory = factory)
             }
         }
     }

@@ -65,6 +65,7 @@ dependencies {
     implementation("com.google.mlkit:barcode-scanning:17.2.0")
 
     implementation("androidx.compose.material:material-icons-extended-android:1.6.7")
+    implementation("com.google.android.material:material:1.12.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

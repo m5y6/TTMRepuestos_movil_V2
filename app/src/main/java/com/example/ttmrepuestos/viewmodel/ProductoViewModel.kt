@@ -18,7 +18,7 @@ class ProductoViewModel(private val repository: ProductoRepository) : ViewModel(
         emptyList()
     )
 
-    // --- ¡NUEVO! Almacén de fotos temporal ---
+    // Almacén de fotos temporal en memoria
     private val _fotosDeProductos = MutableStateFlow<Map<Int, Bitmap>>(emptyMap())
     val fotosDeProductos = _fotosDeProductos.asStateFlow()
 
@@ -28,9 +28,14 @@ class ProductoViewModel(private val repository: ProductoRepository) : ViewModel(
         _fotosDeProductos.value = nuevasFotos
     }
 
-    fun addProduct(nombre: String, precio: Int, descripcion: String, categoria: String) {
+    fun addProduct(nombre: String, precio: Int, descripcion: String, categoria: String, foto: Bitmap?) {
         viewModelScope.launch {
-            repository.insert(Producto(nombre = nombre, precio = precio, descripcion = descripcion, categoria = categoria))
+            val nuevoProducto = Producto(nombre = nombre, precio = precio, descripcion = descripcion, categoria = categoria)
+            val nuevoId = repository.insert(nuevoProducto) // Asumimos que insert devuelve el ID
+            
+            if (foto != null) {
+                asignarFotoAProducto(nuevoId.toInt(), foto)
+            }
         }
     }
 
