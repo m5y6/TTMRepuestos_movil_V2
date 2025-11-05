@@ -32,9 +32,7 @@ fun TerminosScreen(onContinueClicked: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                "Aquí va el texto completo de los términos y condiciones de tu aplicación. " +
-                "Deberías reemplazar este texto con tu propio contenido legal. " +
-                "Asegúrate de que el usuario entienda qué está aceptando.",
+                "Al aceptar los terminos y condiciones de TTM Repuestos nosotros le daremos el acceso a nuestra aplicacion.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White, // Texto blanco para legibilidad
                 textAlign = TextAlign.Justify

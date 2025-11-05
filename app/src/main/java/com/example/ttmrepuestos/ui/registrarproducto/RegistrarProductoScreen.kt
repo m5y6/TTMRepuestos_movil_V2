@@ -3,6 +3,8 @@ package com.example.ttmrepuestos.ui.registrarproducto
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -13,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -51,12 +54,21 @@ fun ContenidoRegistrarProducto(viewModel: ProductoViewModel) {
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview()
     ) { bitmap ->
         if (bitmap != null) {
             fotoCapturada = bitmap
+        }
+    }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            fotoCapturada = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
         }
     }
 
@@ -94,7 +106,6 @@ fun ContenidoRegistrarProducto(viewModel: ProductoViewModel) {
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // --- ¡NUEVO! Animación para la foto ---
                         AnimatedContent(targetState = fotoCapturada, label = "ImageAnimation") { targetBitmap ->
                             if (targetBitmap != null) {
                                 Image(
@@ -107,20 +118,33 @@ fun ContenidoRegistrarProducto(viewModel: ProductoViewModel) {
                                     modifier = Modifier.fillMaxWidth().height(200.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text("Toca el botón \"Tomar Foto\" para añadir una imagen", textAlign = TextAlign.Center)
+                                    Text("Añade una imagen", textAlign = TextAlign.Center)
                                 }
                             }
                         }
 
                         Spacer(Modifier.height(16.dp))
 
-                        Button(
-                            onClick = { cameraLauncher.launch(null) },
-                            colors = CustomButton.colors
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Icon(Icons.Default.CameraAlt, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-                            Text(if (fotoCapturada == null) "Tomar Foto" else "Tomar Otra Foto")
+                            Button(
+                                onClick = { cameraLauncher.launch(null) },
+                                colors = CustomButton.colors
+                            ) {
+                                Icon(Icons.Default.CameraAlt, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+                                Text("Tomar Foto")
+                            }
+                            Button(
+                                onClick = { galleryLauncher.launch("image/*") },
+                                colors = CustomButton.colors
+                            ) {
+                                Icon(Icons.Default.PhotoLibrary, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+                                Text("Galería")
+                            }
                         }
+
 
                         Spacer(Modifier.height(16.dp))
 
@@ -183,7 +207,6 @@ fun ContenidoRegistrarProducto(viewModel: ProductoViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                        // --- ¡NUEVO! Animación de opacidad ---
                         .graphicsLayer { alpha = if (canSave) 1f else 0.6f },
                     colors = CustomButton.colors
                 ) {
